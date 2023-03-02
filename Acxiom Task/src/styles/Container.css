@@ -1,0 +1,19 @@
+.home-container {
+  text-align: center;
+  min-height: 60vh;
+  padding-top: 30px;
+  background: #c9ccd3;
+  background-blend-mode: lighten;
+}
+
+.link {
+  margin: 20px;
+  font-size: large;
+  font-weight: bolder;
+  cursor: pointer;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}

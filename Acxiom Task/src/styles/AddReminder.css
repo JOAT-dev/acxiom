@@ -1,0 +1,48 @@
+.add-reminder {
+  width: 400px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background-image: linear-gradient(to top, #bdc2e8 0%, #bdc2e8 1%, #e6dee9 100%);
+  background-blend-mode: normal, lighten, soft-light;
+  border-radius: 12px;
+  height: 400px;
+  margin-top: 50px;
+  margin-left: 100px;
+}
+
+.reminder-text {
+  display: flex;
+  min-width: 200px;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 20px;
+  align-items: center;
+  justify-content: space-evenly;
+  min-height: 200px;
+}
+
+.lisitem {
+  margin: 10px;
+  width: fit-content;
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 40px;
+}
+
+.button {
+  height: 50px;
+  width: 150px;
+  background-color: black;
+  color: white;
+  transition-duration: 1s;
+  border: none;
+  border-radius: 12px;
+}
+
+.button:hover {
+  cursor: pointer;
+  background-color: #459f21;
+}
