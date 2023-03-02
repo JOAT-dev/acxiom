@@ -17,6 +17,7 @@ const App = () => {
       if (result.error) {
         localStorage.clear();
         store.dispatch(changeLoggedIndex(-1));
+        return;
       }
       store.dispatch(addUser(result));
     })

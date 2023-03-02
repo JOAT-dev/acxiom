@@ -8,7 +8,9 @@ const NavBar = () => {
   const loggedIndex = useSelector((state) => state.indexReducer[0]);
 
   const handleLogout = () => {
+    localStorage.clear();
     store.dispatch(changeLoggedIndex(-1));
+    window.location.reload();
   };
 
   return (

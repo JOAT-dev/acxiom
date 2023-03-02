@@ -50,7 +50,7 @@ router.post("/signin", async (req, res) => {
   } else {
     if (foundone.password === password) {
       const token = jwt.sign({ _id: foundone._id, username: foundone.username }, JWT_SECRET);
-      return res.json({ message: "userlogged in successfully", token });
+      return res.json({ message: "userlogged in successfully", token, user: foundone });
     } else {
       return res.json({ error: "Invalid username or password" });
     }
