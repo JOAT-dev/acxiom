@@ -50,6 +50,55 @@ router.post("/create", authware, (req, res) => {
     });
 });
 
+router.put("/modify", authware, async (req, res) => {
+  const { id, text, email, contact, sms, days } = req.body;
+  // console.log(username);
+  if (!id) {
+    return res.status(422).json({ error: "Something went wrong try again!" });
+  }
+  let datat = await remaindermodel.findById(id);
+  datat.text = text;
+  datat.email = email;
+  datat.sms = sms;
+  datat.contact = contact;
+  datat.days = days;
+  datat
+    .save()
+    .then((resul) => {
+      console.log(resul);
+      res.json({ message: "remainder modified successfully", result: resul });
+    })
+    .catch((err) => {
+      res.status(400).json({ error: "somthing went wrong try again", err: err });
+      console.log(err);
+    });
+});
+
+router.put("/remaindersbyDate", authware, (req, res) => {
+  const { date } = req.body;
+  remaindermodel
+    .find({ date: date })
+    .then((result) => {
+      res.json({ message: "foundsome", result });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+// router.put("/remaindersbyDateSubject", authware, (req, res) => {
+//   const { date, subject } = req.body;
+//   remaindermodel
+//     .find({ date: date, subject: subject })
+//     .then((result) => {
+//       console.log(result);
+//       res.json({ message: "foundsome", result });
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// });
+
 router.delete("/remainder/:id", authware, (req, res) => {
   const { id } = req.params;
   console.log(id);

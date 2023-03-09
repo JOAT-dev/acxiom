@@ -11,4 +11,6 @@ var remainderSchema = new mongoose.Schema({
   date: { type: Date, required: true },
 });
 
+// remainderSchema.index({ subject: 1, date: 1 });
+
 module.exports = mongoose.model("remainder", remainderSchema);

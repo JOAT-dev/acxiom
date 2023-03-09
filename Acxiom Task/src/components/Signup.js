@@ -33,10 +33,6 @@ const Signup = () => {
   };
 
   const handleSignup = () => {
-    const newUser = {
-      username: username,
-      password: password,
-    };
     fetch("http://localhost:5000/auth/signup", {
       method: "POST",
       headers: { "Content-type": "application/json" },

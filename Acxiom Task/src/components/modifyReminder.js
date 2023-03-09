@@ -1,21 +1,35 @@
-import TextField from "@material-ui/core/TextField";
-import { useState } from "react";
-import { addReminder } from "../store/reminderReducer";
+import {
+  Alert,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Radio,
+  RadioGroup,
+  Select,
+  Snackbar,
+  TextField,
+} from "@mui/material";
+import React, { useState } from "react";
+import { modifyRemainder } from "../store/reminderReducer";
 import { store } from "../store/store";
-import "../styles/AddReminder.css";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import { MenuItem, Select } from "@material-ui/core";
-import { Alert, FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar } from "@mui/material";
 import { useHistory } from "react-router-dom";
 
-const AddReminder = () => {
+function ModifyReminder() {
   const history = useHistory();
   const [date, setDate] = useState("");
+  const [datebyData, setdatebyData] = useState([]);
+  const [dataLump, setdataLump] = useState([]);
+  const [dataToSetUp, setdataToSetUp] = useState({});
   const [openFailedSubmit, setopenFailedSubmit] = useState("");
 
   const [reminderText, setReminderText] = useState("");
+  const [reminderSelectText, setReminderSelectText] = useState("");
+  const [reminderTexts, setReminderTexts] = useState([]);
   const [reminderSubject, setReminderSubject] = useState("");
+  const [reminderSubjects, setReminderSubjects] = useState(["Select a date"]);
   const [reminderemail, setReminderemail] = useState("");
   const [remindercontact, setRemindercontact] = useState("");
   const [remindersms, setRemindersms] = useState("");
@@ -24,11 +38,56 @@ const AddReminder = () => {
   const handleChange = (e) => {
     setReminderText(e.target.value);
   };
+  console.log(users);
   const handleDateChange = (e) => {
     setDate(e.target.value);
+    fetch("http://localhost:5000/remainder/remaindersbyDate", {
+      method: "put",
+      headers: { "Content-type": "application/json", Authorization: "Bearer " + localStorage.getItem("jwt") },
+      body: JSON.stringify({ date: e.target.value }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        if (result && result.result && result.result.length) {
+          var data = [];
+          setdatebyData(result.result);
+          setdataLump(result.result);
+          result.result.map((x) => data.push(x.subject));
+          console.log(data);
+          setReminderSubjects(data);
+        } else {
+          setReminderSubjects(["Select a date"]);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const handleChangeSelectText = (e) => {
+    setReminderSelectText(e.target.value);
+    var data = dataLump.filter((x) => x.text.indexOf(e.target.value) > -1);
+    setdataToSetUp(data[0]);
+    setReminderText(data[0].text);
+    setReminderemail(data[0].email);
+    setRemindercontact(data[0].contact);
+    setRemindersms(data[0].sms);
+    // console.log(data[0].days);
+    setReminderoccur(data[0].days);
+    // var dame = [];
+    // data.map((x) => dame.push(x.text));
+    // console.log(dame);
+    // setReminderTexts(dame);
   };
   const handleChangeSubject = (e) => {
     setReminderSubject(e.target.value);
+    // console.log(datebyData, e.target.value);
+    var data = datebyData.filter((x) => x.subject === e.target.value);
+    setdataLump(data);
+    var dame = [];
+    data.map((x) => dame.push(x.text.substr(0, 20)));
+    // console.log(dame);
+    setReminderTexts(dame);
   };
   const handleChangeEmail = (e) => {
     setReminderemail(e.target.value);
@@ -55,42 +114,33 @@ const AddReminder = () => {
       return;
     }
     const reminder = {
-      username: users.username,
-      date: date,
-      subject: reminderSubject,
+      id: dataToSetUp._id,
       email: reminderemail,
       text: reminderText,
       contact: remindercontact,
       sms: remindersms,
-      occur: reminderoccur,
+      days: reminderoccur,
     };
-    fetch("http://localhost:5000/remainder/create", {
-      method: "post",
+    fetch("http://localhost:5000/remainder/modify", {
+      method: "put",
       headers: { "Content-type": "application/json", Authorization: "Bearer " + localStorage.getItem("jwt") },
       body: JSON.stringify(reminder),
     })
       .then((res) => res.json())
       .then((result) => {
         console.log(result);
-        store.dispatch(addReminder(result.result));
-        setReminderText("");
-        setReminderemail("");
-        setReminderSubject("");
-        setDate("");
-        setReminderoccur("");
-        setRemindercontact("");
-        setRemindersms("");
+        store.dispatch(modifyRemainder(result.result));
+        history.push("/remainders");
       })
       .catch((err) => {
         console.log(err);
       });
   };
-
   return (
     <div className="home-container">
-      <h2>Set Your Reminder</h2>
+      <h2>Modify Reminder</h2>
       <form action=""></form>
-      <div className="reminder-text list paper">
+      <Paper className="reminder-text list">
         <form className="lisitem" onSubmit={handleSubmit}>
           Select a Date:
           <input type="date" value={date} onChange={handleDateChange} />
@@ -98,9 +148,31 @@ const AddReminder = () => {
         <FormControl className="lisitem" fullWidth>
           <InputLabel id="demo-simple-select-label">Subject</InputLabel>
           <Select labelId="demo-simple-select-label" id="demo-simple-select" value={reminderSubject} label="Subject" onChange={handleChangeSubject}>
-            <MenuItem value="Subject 1">Subject 1</MenuItem>
-            <MenuItem value="Subject 2">Subject 2</MenuItem>
-            <MenuItem value="Subject 3">Subject 3</MenuItem>
+            {reminderSubjects.map((remsub, i) => {
+              return (
+                <MenuItem key={i} value={remsub}>
+                  {remsub}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+        <FormControl className="lisitem" fullWidth>
+          <InputLabel id="demo-simple-select-label">Remainders</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={reminderSelectText}
+            label="Subject"
+            onChange={handleChangeSelectText}
+          >
+            {reminderTexts.map((remtext, i) => {
+              return (
+                <MenuItem key={i} value={remtext}>
+                  {remtext}
+                </MenuItem>
+              );
+            })}
           </Select>
         </FormControl>
         <TextField
@@ -131,10 +203,10 @@ const AddReminder = () => {
             <FormControlLabel value="2" control={<Radio />} label="2 Days" />
           </RadioGroup>
         </FormControl>
-      </div>
+      </Paper>
       <div className="add-button">
         <input className="button" type="button" value="Back" onClick={() => history.push("/")} />
-        <input className="button" type="button" value="Add Reminder" onClick={handleSubmit} />
+        <input className="button" type="button" value="Modify Reminder" onClick={handleSubmit} />
       </div>
       <Snackbar open={openFailedSubmit} autoHideDuration={6000} onClose={handleCloseError}>
         <Alert onClose={handleCloseError} severity="error" sx={{ width: "100%" }}>
@@ -143,6 +215,6 @@ const AddReminder = () => {
       </Snackbar>
     </div>
   );
-};
+}
 
-export default AddReminder;
+export default ModifyReminder;

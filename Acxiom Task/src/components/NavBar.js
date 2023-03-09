@@ -1,22 +1,38 @@
 import { useSelector } from "react-redux";
-import { changeLoggedIndex } from "../store/indexReducer";
 import { store } from "../store/store";
 import "../styles/NavBar.css";
 import logout from "./logout.png";
+import { loggedOut } from "../store/userReducer";
 
 const NavBar = () => {
-  const loggedIndex = useSelector((state) => state.indexReducer[0]);
+  const users = useSelector((state) => state.userReducer);
 
   const handleLogout = () => {
     localStorage.clear();
-    store.dispatch(changeLoggedIndex(-1));
+    store.dispatch(loggedOut());
     window.location.reload();
   };
 
   return (
-    <div className="navbar">
-      Acxiom Reminder-App
-      {loggedIndex != -1 && <img onClick={handleLogout} src={logout} className="logout" />}
+    <div>
+      {/* <AppBar position="sticky" sx={{ height: "80px", textAlign: "center" }}>
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontSize: 32, fontWeight: 900 }}>
+            Acxiom Reminder-App
+          </Typography>
+          {users.auth ? (
+            <IconButton color="secondary">
+              <img onClick={handleLogout} src={logout} className="logout" />
+            </IconButton>
+          ) : (
+            <Button color="inherit">Login</Button>
+          )}
+        </Toolbar>
+      </AppBar> */}
+      <div className="navbar">
+        Acxiom Reminder-App
+        {users.auth && <img onClick={handleLogout} alt="log out" src={logout} className="logout" />}
+      </div>
     </div>
   );
 };

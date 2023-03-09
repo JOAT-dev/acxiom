@@ -4,9 +4,8 @@ import { Link } from "react-router-dom";
 import "../styles/Auth.css";
 import { store } from "../store/store";
 import { useHistory } from "react-router";
-import { changeLoggedIndex } from "../store/indexReducer";
 import { Alert, Snackbar } from "@mui/material";
-import { addUser } from "../store/userReducer";
+import { loggedIn } from "../store/userReducer";
 
 const Login = () => {
   const history = useHistory();
@@ -46,8 +45,7 @@ const Login = () => {
           return;
         }
         localStorage.setItem("jwt", result.token);
-        store.dispatch(addUser(result.user));
-        store.dispatch(changeLoggedIndex(0));
+        store.dispatch(loggedIn(result.user.username));
         setUsername("");
         setPassword("");
       })
